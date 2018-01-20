@@ -43,7 +43,7 @@ public class Graph_paint extends JFrame
 	{
 		new Graph_paint();
 	}
-	
+
 	//INSTANZMETHODEN
 	/**
 	 * Wird von Konstruktor aufgerufen. Setzt alle Elemente der Klasse auf ein Fenster um.

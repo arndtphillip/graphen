@@ -2,7 +2,6 @@ package graphen;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Stack;
 
 /**
  * Klasse für Funktionalität eines Graphen. Speichert Knoten in einem Vektor und Kanten mit Gewichtung in einer Adjazenzmatrix.
@@ -292,42 +291,77 @@ public class Graph
 		if (start == end)
 			return start;
 		else {
-			int current = start;
 			int distance = 0;
-			java.util.ArrayList<Integer> visited = new ArrayList<>();
-			visited.add(current);
+			/*java.util.ArrayList<Integer> visited = new ArrayList<>();
+			visited.add(current);*/
 
-			System.out.print(" --> " + current);
+			//System.out.print(" --> " + current);
+			ArrayList<Integer[]> reachable = new ArrayList<>();
 
-			while (current != end) {
-				// find all adjacent nodes
-				int nearestNeighbor = -1;
-				int currentIndex = knotennr(current);
+			Integer[] current = {start, start, 0};
+			//reachable[0] = current;
 
+			/*for(int i = 1; i < knoten.length; i++) {
+				// Knoten / Vorgänger / Distanz gesamt
+				reachable[i] = new int[3];
+			}*/
+
+			while (current[0] != end) {
+				int currentIndex = knotennr(current[0]);
+
+				// find reachable nodes with distance
 				if (currentIndex > -1) {
 					for (int i = 0; i < kante[currentIndex].length; i++) {
-						if (kante[currentIndex][i] > 0 && !visited.contains(knoten[i])) {
-							// connection existing
-							nearestNeighbor = i;
+						if (kante[currentIndex][i] > 0) {
+							// connection exists
+							int possibleNeighbor = knoten[i];
+
+							boolean add = true;
+							// check if a shorter path is already available (in reachable list)
+							for(int j = 0; j < reachable.size(); j++) {
+								if(reachable.get(j)[0] == possibleNeighbor && reachable.get(j)[2] < kante[currentIndex][i]
+										&& reachable.get(j)[2] != 0)
+									add = false;
+							}
+
+							// only add if no shorter path is available
+							if (add) {
+								Integer[] newReachable = {knoten[i], current[0], current[2] + kante[currentIndex][i]};
+								reachable.add(newReachable);
+							}
 						}
 					}
 				}
 
-				if (nearestNeighbor >= 0) {
-					distance += kante[currentIndex][nearestNeighbor];
-					current = knoten[nearestNeighbor];
-					visited.add(current);
+				// find the entry with lowest distance in reachable list
+				Integer[] nearestNeighbor = { 0, 0, 0 };
 
-					System.out.print(" --> " + current);
+				// hacky workaround
+				int shortestDistance = 100000;
 
-					System.out.println("\nDistance: " + distance);
+				// save index to delete entry afterwards
+				int index = -1;
+
+				for(int i = 0; i < reachable.size(); i++) {
+					if(reachable.get(i)[2] < shortestDistance) {
+						shortestDistance = reachable.get(i)[2];
+						nearestNeighbor = reachable.get(i);
+						index = i;
+					}
+				}
+
+				if(index >= 0) {
+					reachable.remove(index);
+					current = nearestNeighbor;
 				} else {
+					// kein weg vorhanden
 					System.err.println("404");
 					break;
-					// kein weg vorhanden
 				}
 			}
+			System.out.println("distance --> " + current[2]);
 		}
+
 
 		return 0;
 	}
