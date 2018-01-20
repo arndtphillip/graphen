@@ -1,6 +1,9 @@
 package graphen;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.Stack;
+
 /**
  * Klasse für Funktionalität eines Graphen. Speichert Knoten in einem Vektor und Kanten mit Gewichtung in einer Adjazenzmatrix.
  * @author Leonardo Ruland, 558307
@@ -22,11 +25,13 @@ public class Graph
 		knzahl = 0;
 		kante = new int[kn][kn];
 		knoten = new int[kn];
-		for (int i = 0; i < knzahl; i++)//Alle Kanten Initialisieren
+
+		// knzahl ist immer 0, deswegen werden die schleifen im Konstuktor nie aufgerufen
+		/*for (int i = 0; i < knzahl; i++)//Alle Kanten Initialisieren
 			for (int j = 0; j < knzahl; j++)
 				kante[i][j] = 0;
 		for (int i = 0 ; i < knzahl ; i++)//Alle Knoten Initialisieren
-			knoten[i] = 0;
+			knoten[i] = 0;*/
 	}
 	//GETTER & SETTER
 	public int getKnzahl()
@@ -51,6 +56,7 @@ public class Graph
 		this.knoten = g.knoten;
 		this.knzahl = g.knzahl;
 	}
+
 	//KLASSENMETHODEN
 	/**
 	 * Erstellt einen Graphen nach zufälligen Vorgaben.
@@ -68,6 +74,7 @@ public class Graph
 			g.kanteneu(g.knoten[zufall.nextInt(g.getKnzahl())], g.knoten[zufall.nextInt(g.getKnzahl())], 1+zufall.nextInt(gewichtmax)+1 );
 		return g;
 	}
+
 	//INSTANZMETHODEN
 	/**
 	 * Prüft, ob der übergebene Knoten im Format Integer im Knotenvektor vorhanden ist.
@@ -282,4 +289,54 @@ public class Graph
 		//ALG
 		return ret;
 	}
+
+	/**
+	 * @author Philipp Arndt
+	 * @param start Startknoten
+	 * @param end Zielknoten
+	 */
+	public int shortestPath(int start, int end) {
+		if (start == end)
+			return start;
+		else {
+			int current = start;
+			int distance = 0;
+			java.util.ArrayList<Integer> visited = new ArrayList<>();
+			visited.add(current);
+
+			System.out.print(" --> " + current);
+
+			while (current != end) {
+				// find all adjacent nodes
+				int nearestNeighbor = -1;
+				int currentIndex = knotennr(current);
+
+				if (currentIndex > -1) {
+					for (int i = 0; i < kante[currentIndex].length; i++) {
+						if (kante[currentIndex][i] > 0 && !visited.contains(knoten[i])) {
+							// connection existing
+							nearestNeighbor = i;
+						}
+					}
+				}
+
+				if (nearestNeighbor >= 0) {
+					distance += kante[currentIndex][nearestNeighbor];
+					current = knoten[nearestNeighbor];
+					visited.add(current);
+
+					System.out.print(" --> " + current);
+
+					System.out.println("\nDistance: " + distance);
+				} else {
+					System.err.println("404");
+					break;
+					// kein weg vorhanden
+				}
+			}
+		}
+
+		return 0;
+	}
+
 }

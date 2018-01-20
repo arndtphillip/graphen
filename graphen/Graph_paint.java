@@ -26,7 +26,7 @@ public class Graph_paint extends JFrame
 	private JFrame frame;
 	private JPanel menu;
 	private JLabel anzKnotenT,anzKnotenV;
-	private JButton neuKnoten, delKnoten, neuKante, delKante, delGraph, speichern, laden, zufallsgraph;
+	private JButton neuKnoten, delKnoten, neuKante, delKante, delGraph, speichern, laden, zufallsgraph, shortestPath;
 	/**
 	 * Konstruktor der Klasse. Bildet ein Graphen-Objekt und initialisiert die graphische Oberfläche.
 	 */
@@ -43,6 +43,7 @@ public class Graph_paint extends JFrame
 	{
 		new Graph_paint();
 	}
+	
 	//INSTANZMETHODEN
 	/**
 	 * Wird von Konstruktor aufgerufen. Setzt alle Elemente der Klasse auf ein Fenster um.
@@ -55,39 +56,53 @@ public class Graph_paint extends JFrame
 		frame.setSize(fensterX,fensterY);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout() );
+
 		//Menu
 		menu = new JPanel();
 		menu.setLayout(new FlowLayout() );
 		frame.add(menu, BorderLayout.NORTH);
+
 		//Neuer Knoten
 		menu.add(neuKnoten = new JButton("Neuer Knoten") );
 		neuKnoten.addActionListener( new KnotenErstellen() );
+
 		//Knoten löschen
 		menu.add(delKnoten = new JButton("Knoten löschen") );
 		delKnoten.addActionListener( new KnotenLoeschen(graph) );
+
 		//Neue Kante
 		menu.add( neuKante = new JButton("Neue Kante") );
 		neuKante.addActionListener( new KanteErstellen(graph) );
+
 		//Kante löschen
 		menu.add(delKante = new JButton("Kante löschen") );
 		delKante.addActionListener( new KanteLoeschen(graph) );
+
 		//Graphen speichern
 		menu.add(delGraph = new JButton("Graphen löschen") );
 		delGraph.addActionListener( new GraphLoeschen() );
+
 		//Graphen speichern
 		menu.add(speichern = new JButton("Graphen speichern") );
 		speichern.addActionListener( new GraphSpeichern() );
+
 		//Graphen laden
 		menu.add(laden = new JButton("Graphen laden") );
 		laden.addActionListener( new GraphLaden() );
+
 		//Graphen speichern
 		menu.add(zufallsgraph = new JButton("Zufallsgraph!") );
 		zufallsgraph.addActionListener( new GraphZufall() );
+
+		menu.add(shortestPath = new JButton("Kürzester Weg"));
+		shortestPath.addActionListener(new ShortestPath(graph));
+
 		//Anzeige existente Knoten
 		menu.add(anzKnotenT = new JLabel("Anzahl Knoten: ") );
 		menu.add(anzKnotenV = new JLabel( Integer.toString(graph.getKnzahl()) + " \\ " + graph.getKnoten().length ));
+
 		//Graphen Anzeige
-		frame.add( new PaintPanel(),BorderLayout.CENTER );
+		frame.add( new PaintPanel(), BorderLayout.CENTER );
 		frame.setVisible(true);
 	}
 	/**
@@ -166,8 +181,7 @@ public class Graph_paint extends JFrame
 		{
 			super.paintComponent(g);
 			//graph.ausgabe();
-			NodeList knotenliste = null;
-			knotenliste = new NodeList();
+			NodeList knotenliste = new NodeList();
 			int count = 0;
 			for(int i = 0 ; i < graph.getKnoten().length ; i++)
 				if(graph.getKnoten()[i] != 0 && graph.getKnoten()[i] != -1){
