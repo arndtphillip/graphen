@@ -11,7 +11,7 @@ import java.util.Stack;
  * @see Graph_paint
  */
 public class Graph
-{ 
+{
 	//ATTRIBUTE & KONSTRUKTOR
 	private int knzahl;
 	private int[][] kante;
@@ -25,13 +25,6 @@ public class Graph
 		knzahl = 0;
 		kante = new int[kn][kn];
 		knoten = new int[kn];
-
-		// knzahl ist immer 0, deswegen werden die schleifen im Konstuktor nie aufgerufen
-		/*for (int i = 0; i < knzahl; i++)//Alle Kanten Initialisieren
-			for (int j = 0; j < knzahl; j++)
-				kante[i][j] = 0;
-		for (int i = 0 ; i < knzahl ; i++)//Alle Knoten Initialisieren
-			knoten[i] = 0;*/
 	}
 	//GETTER & SETTER
 	public int getKnzahl()
@@ -91,7 +84,7 @@ public class Graph
 	}
 	/**
 	 * Erstellt einen neuen Knoten und fügt diesen ggf. ins Array ein.
-	 * Prüft, ob der Knoten bereits existiert oder das Array keine weiteren Knoten mehr fassen kann und gibt dementsprechend Fehlermeldungen auf der Konsole aus. 
+	 * Prüft, ob der Knoten bereits existiert oder das Array keine weiteren Knoten mehr fassen kann und gibt dementsprechend Fehlermeldungen auf der Konsole aus.
 	 * @param kn Neu zu erstellender Knoten
 	 */
 	public void knotenneu(int kn)
@@ -99,8 +92,8 @@ public class Graph
 		if ( !knotenexistiert(kn) && knzahl < knoten.length ){
 			boolean fertig = false;
 			int i = 0;
-			while (!fertig && i < knoten.length) { 
-				if ( knoten[i] == 0 || knoten[i] == -1) { 
+			while (!fertig && i < knoten.length) {
+				if ( knoten[i] == 0 || knoten[i] == -1) {
 					knoten[i] = kn;
 					fertig = true;
 				}
@@ -114,7 +107,7 @@ public class Graph
 	}
 	/**
 	 * Spezielle Funktion für das schreiben der Datei, da Quelle 1:1 eingespeist werden soll.
-	 * Erstellt einen neuen Knoten und fügt diesen ins Array ein. 
+	 * Erstellt einen neuen Knoten und fügt diesen ins Array ein.
 	 * @param kn Neu zu erstellender Knoten
 	 */
 	private void knotenneuDateilesen(int kn)
@@ -122,7 +115,7 @@ public class Graph
 		boolean fertig = false;
 		int i = 0;
 		while (!fertig && i < knoten.length) {
-			if ( knoten[i] == 0 ) {  
+			if ( knoten[i] == 0 ) {
 				knoten[i] = kn;
 				fertig = true;
 			}
@@ -193,7 +186,7 @@ public class Graph
 			kante[n2][n1] = 0;
 		} else
 			System.out.println("Kante Löschen: Mindestens ein Knoten existiert nicht");
-	}	
+	}
 	/**
 	 * Gibt Knoten und Kanten auf der Konsole aus.
 	 */
