@@ -291,20 +291,10 @@ public class Graph
 		if (start == end)
 			return start;
 		else {
-			int distance = 0;
-			/*java.util.ArrayList<Integer> visited = new ArrayList<>();
-			visited.add(current);*/
-
-			//System.out.print(" --> " + current);
 			ArrayList<Integer[]> reachable = new ArrayList<>();
+			ArrayList<Integer[]> reached = new ArrayList<>();
 
 			Integer[] current = {start, start, 0};
-			//reachable[0] = current;
-
-			/*for(int i = 1; i < knoten.length; i++) {
-				// Knoten / Vorgänger / Distanz gesamt
-				reachable[i] = new int[3];
-			}*/
 
 			while (current[0] != end) {
 				int currentIndex = knotennr(current[0]);
@@ -312,7 +302,7 @@ public class Graph
 				// find reachable nodes with distance
 				if (currentIndex > -1) {
 					for (int i = 0; i < kante[currentIndex].length; i++) {
-						if (kante[currentIndex][i] > 0) {
+						if (kante[currentIndex][i] > 0 && i != currentIndex) {
 							// connection exists
 							int possibleNeighbor = knoten[i];
 
@@ -333,6 +323,7 @@ public class Graph
 					}
 				}
 
+
 				// find the entry with lowest distance in reachable list
 				Integer[] nearestNeighbor = { 0, 0, 0 };
 
@@ -352,6 +343,7 @@ public class Graph
 
 				if(index >= 0) {
 					reachable.remove(index);
+					reached.add(current);
 					current = nearestNeighbor;
 				} else {
 					// kein weg vorhanden
@@ -359,7 +351,31 @@ public class Graph
 					break;
 				}
 			}
-			System.out.println("distance --> " + current[2]);
+
+			// find way with backwarding
+			int previous = current[1];
+
+			// string builder for creation of shortest path string
+			StringBuilder sb = new StringBuilder();
+			sb.append(end);
+
+			while(previous != start) {
+				for(int i = 0; i < reached.size(); i++) {
+					if(reached.get(i)[0] == previous) {
+						// append at the beginning
+						sb.insert(0, previous + " --> ");
+
+						previous = reached.get(i)[1];
+					}
+				}
+			}
+
+			// append at the beginning
+			sb.insert(0, start + " --> ");
+
+			System.out.println(sb.toString());
+
+			System.out.println("distance: " + current[2]);
 		}
 
 
