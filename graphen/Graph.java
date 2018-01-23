@@ -287,9 +287,9 @@ public class Graph
 	 * @param start Startknoten
 	 * @param end Zielknoten
 	 */
-	public int shortestPath(int start, int end) {
-		if (start == end)
-			return start;
+	public Path shortestPath(int start, int end) {
+		if (start == end)	// nothing to do here
+			return new Path(start + " --> " + end, 0);
 		else {
 			ArrayList<Integer[]> reachable = new ArrayList<>();
 			ArrayList<Integer[]> reached = new ArrayList<>();
@@ -314,6 +314,12 @@ public class Graph
 									add = false;
 							}
 
+							// check if node was already reached
+							for(int j = 0; j < reached.size(); j++) {
+								if(reached.get(j)[0] == possibleNeighbor)
+									add = false;
+							}
+
 							// only add if no shorter path is available
 							if (add) {
 								Integer[] newReachable = {knoten[i], current[0], current[2] + kante[currentIndex][i]};
@@ -323,12 +329,11 @@ public class Graph
 					}
 				}
 
-
 				// find the entry with lowest distance in reachable list
 				Integer[] nearestNeighbor = { 0, 0, 0 };
 
 				// hacky workaround
-				int shortestDistance = 100000;
+				int shortestDistance = 10000000;
 
 				// save index to delete entry afterwards
 				int index = -1;
@@ -347,12 +352,11 @@ public class Graph
 					current = nearestNeighbor;
 				} else {
 					// kein weg vorhanden
-					System.err.println("404");
-					break;
+					return new Path("Kein Weg vorhanden", 0);
 				}
 			}
 
-			// find way with backwarding
+			// find way with back-warding
 			int previous = current[1];
 
 			// string builder for creation of shortest path string
@@ -373,13 +377,11 @@ public class Graph
 			// append at the beginning
 			sb.insert(0, start + " --> ");
 
-			System.out.println(sb.toString());
+			return new Path(sb.toString(), current[2]);
 
-			System.out.println("distance: " + current[2]);
+			/*System.out.println(sb.toString());
+
+			System.out.println("distance: " + current[2]);*/
 		}
-
-
-		return 0;
 	}
-
 }

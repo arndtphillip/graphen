@@ -11,17 +11,17 @@ class ShortestPath implements ActionListener {
     private JDialog inputDialog;
     private JLabel labelStart, labelEnd;
     private JTextField start, end;
-    private JButton calculate;
+    private JLabel labelPath, labelDistance;
+    private JPanel panelControls;
+    private JButton calculate, cancel;
 
     ShortestPath(Graph g) {
         graph = g;
 
         inputDialog = new JDialog();
         inputDialog.setTitle("Kürzester Weg");
-        inputDialog.setBounds(100, 100, 300, 130);
-        inputDialog.setLayout(new FlowLayout());
-        //inputDialog.setModal(true);
-        //inputDialog.setVisible(true);
+        inputDialog.setBounds(100, 100, 300, 250);
+        inputDialog.setLayout(new BoxLayout(inputDialog.getContentPane(), BoxLayout.Y_AXIS));
 
         // start node
         inputDialog.add(labelStart = new JLabel("Startknoten:"));
@@ -33,8 +33,20 @@ class ShortestPath implements ActionListener {
         inputDialog.add(end = new JTextField());
         end.setColumns(12);
 
-        inputDialog.add(calculate = new JButton("Berechnen"));
+        // result
+        inputDialog.add(labelPath = new JLabel("Weg:"));
+        labelPath.setAlignmentX(Component.LEFT_ALIGNMENT);
+        inputDialog.add(labelDistance = new JLabel("Distanz:"));
+        labelDistance.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        inputDialog.add(panelControls = new JPanel());
+        // calculate button
+        panelControls.add(calculate = new JButton("Berechnen"));
         calculate.addActionListener(e -> calculate(e));
+
+        // cancel button
+        panelControls.add(cancel = new JButton("Abbrechen"));
+        cancel.addActionListener(e -> cancel(e));
     }
 
     @Override
@@ -54,9 +66,17 @@ class ShortestPath implements ActionListener {
         }
 
         if(startNode > 0 && endNode > 0) {
-            graph.shortestPath(startNode, endNode);
-            // calculate
-            inputDialog.setVisible(false);
+            // calculate path
+            Path shortestPath = graph.shortestPath(startNode, endNode);
+
+            // set result labels
+            labelPath.setText("Weg: " + shortestPath.getPath());
+            labelDistance.setText("Distanz: " + shortestPath.getDistance());
         }
+    }
+
+    private void cancel(ActionEvent e) {
+        // close dialog
+        inputDialog.dispose();
     }
 }
