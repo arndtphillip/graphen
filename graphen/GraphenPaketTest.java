@@ -68,7 +68,7 @@ public class GraphenPaketTest
 	public void saveAndLoadTest()
 	{
 		Graph a = new Graph(0),b = new Graph(0);
-		a.setGraph( Graph.zufallsGraph() );
+		a.setGraph( Graph.zufallsGraph(10, 10) );
 		a.dateischreiben();
 		b.setGraph( b.dateilesen() );
 		for(int i = 0 ; i < a.getKante().length ; i++)

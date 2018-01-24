@@ -45,7 +45,7 @@ public class Graphtest
         System.out.println("ENDE III");
         //TEST LESEN/SCHREIBEN
         g.dateischreiben();
-        g.setGraph( Graph.zufallsGraph() );
+        g.setGraph( Graph.zufallsGraph(10, 10) );
         System.out.println("Neuer Graph:");
         g.ausgabe();
         g.setGraph( g.dateilesen() );

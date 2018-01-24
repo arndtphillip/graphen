@@ -83,18 +83,18 @@ public class Graph_paint extends JFrame
 		delGraph.addActionListener( new GraphLoeschen() );
 
 		//Graphen speichern
-		menu.add(speichern = new JButton("Graphen speichern") );
+		menu.add(speichern = new JButton("Speichern") );
 		speichern.addActionListener( new GraphSpeichern() );
 
 		//Graphen laden
-		menu.add(laden = new JButton("Graphen laden") );
+		menu.add(laden = new JButton("Laden") );
 		laden.addActionListener( new GraphLaden() );
 
 		//Graphen speichern
 		menu.add(zufallsgraph = new JButton("Zufallsgraph!") );
 		zufallsgraph.addActionListener( new GraphZufall() );
 
-		menu.add(shortestPath = new JButton("Kürzester Weg"));
+		menu.add(shortestPath = new JButton("Wegsuche"));
 		shortestPath.addActionListener(new ShortestPath(graph));
 
 		//Anzeige existente Knoten
@@ -300,7 +300,6 @@ public class Graph_paint extends JFrame
 	     * @author Leonardo Ruland, 558307
 	     * @see Graph_paint
 	     * @see Graph
-	     * @see KnotenEntfernen
 	     */
 		class Schliessen implements ActionListener
 		{
@@ -486,19 +485,71 @@ public class Graph_paint extends JFrame
     /**
      * Subklasse für den Button Zufallsgraph.
      * Erstellt einen Zufälligen Graphen..
-     * @author Leonardo Ruland, 558307
+     * @author Leonardo Ruland, 558307 / Philipp Arndt, 561164
      * @see Graph_paint
      * @see Graph
      */
 	class GraphZufall implements ActionListener
 	{
 		Graph temp;
+
+		JDialog dialog;
+		JLabel nodes, edges;
+		JTextField amountNodes, amountEdges;
+		JLabel labelError;
+		JButton ok;
+
+		GraphZufall() {
+			dialog = new JDialog();
+			dialog.setTitle("Kürzester Weg");
+			dialog.setBounds(100, 100, 300, 150);
+			dialog.setLayout(new FlowLayout());
+
+			dialog.add(nodes = new JLabel("Anzahl Knoten: "));
+			dialog.add(amountNodes = new JTextField());
+			amountNodes.setColumns(12);
+
+			dialog.add(edges = new JLabel("Anzahl Kanten: "));
+			dialog.add(amountEdges = new JTextField());
+			amountEdges.setColumns(12);
+
+			dialog.add(labelError = new JLabel());
+			labelError.setForeground(Color.RED);
+
+			dialog.add(ok = new JButton("Zufallsgraph erzeugen"));
+			ok.addActionListener(x -> randomize());
+		}
+
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			graph.setGraph( Graph.zufallsGraph() );
-			anzKnotenV.setText( Integer.toString( graph.getKnzahl()) + " \\ " + graph.getKnoten().length );
-			frame.repaint();
+			dialog.setVisible(true);
+		}
+
+		/**
+		 * create new random graph
+		 */
+		private void randomize() {
+			try {
+				int kn = Integer.parseInt(amountNodes.getText());
+				int kt = Integer.parseInt(amountEdges.getText());
+
+				if(kn > 20 || kt > 20 || kn < 0 || kt < 0)
+					labelError.setText("Anzahl muss zwischen 0 und 20 liegen");
+				else {
+					labelError.setText("");
+
+					graph.setGraph(Graph.zufallsGraph(kn, kt));
+					anzKnotenV.setText(Integer.toString(graph.getKnzahl()) + " \\ " + graph.getKnoten().length);
+					frame.repaint();
+
+					// close dialog
+					dialog.dispose();
+				}
+			}
+			catch(Exception e) {
+				labelError.setText("Fehler bei der Eingabe");
+			}
 		}
 	}
 }

@@ -12,6 +12,9 @@ class ShortestPath implements ActionListener {
     private JLabel labelStart, labelEnd;
     private JTextField start, end;
     private JLabel labelPath, labelDistance;
+
+    private JRadioButton shortestPath, depthFirstSearch;
+
     private JPanel panelControls;
     private JButton calculate, cancel;
 
@@ -20,7 +23,7 @@ class ShortestPath implements ActionListener {
 
         inputDialog = new JDialog();
         inputDialog.setTitle("Kürzester Weg");
-        inputDialog.setBounds(100, 100, 300, 250);
+        inputDialog.setBounds(100, 100, 300, 300);
         inputDialog.setLayout(new BoxLayout(inputDialog.getContentPane(), BoxLayout.Y_AXIS));
 
         // start node
@@ -35,11 +38,28 @@ class ShortestPath implements ActionListener {
 
         // result
         inputDialog.add(labelPath = new JLabel("Weg:"));
-        labelPath.setAlignmentX(Component.LEFT_ALIGNMENT);
         inputDialog.add(labelDistance = new JLabel("Distanz:"));
-        labelDistance.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        inputDialog.add(panelControls = new JPanel());
+
+        shortestPath = new JRadioButton("Kürzester Weg");
+        shortestPath.setSelected(true);
+        depthFirstSearch = new JRadioButton("Tiefensuche");
+        //pigButton.setMnemonic(KeyEvent.VK_P);
+        //pigButton.setActionCommand(pigString);
+
+        //Group the radio buttons.
+        ButtonGroup group = new ButtonGroup();
+        group.add(shortestPath);
+        group.add(depthFirstSearch);
+
+        JPanel panelSelect = new JPanel();
+        panelSelect.setLayout(new FlowLayout());
+        panelSelect.add(shortestPath);
+        panelSelect.add(depthFirstSearch);
+
+        inputDialog.add(panelSelect);
+
+        panelControls = new JPanel();
         // calculate button
         panelControls.add(calculate = new JButton("Berechnen"));
         calculate.addActionListener(e -> calculate(e));
@@ -47,6 +67,8 @@ class ShortestPath implements ActionListener {
         // cancel button
         panelControls.add(cancel = new JButton("Abbrechen"));
         cancel.addActionListener(e -> cancel(e));
+
+        inputDialog.add(panelControls);
     }
 
     @Override
@@ -67,11 +89,15 @@ class ShortestPath implements ActionListener {
 
         if(startNode > 0 && endNode > 0) {
             // calculate path
-            Path shortestPath = graph.shortestPath(startNode, endNode);
+            Path path;
+            if(shortestPath.isSelected())
+                path = graph.shortestPath(startNode, endNode);
+            else
+                path = graph.depthFirstSearch(startNode, endNode);
 
             // set result labels
-            labelPath.setText("Weg: " + shortestPath.getPath());
-            labelDistance.setText("Distanz: " + shortestPath.getDistance());
+            labelPath.setText("Weg: " + path.getPath());
+            labelDistance.setText("Distanz: " + path.getDistance());
         }
     }
 

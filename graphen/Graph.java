@@ -2,6 +2,7 @@ package graphen;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Stack;
 
 /**
  * Klasse für Funktionalität eines Graphen. Speichert Knoten in einem Vektor und Kanten mit Gewichtung in einer Adjazenzmatrix.
@@ -54,11 +55,11 @@ public class Graph
 	 * Erstellt einen Graphen nach zufälligen Vorgaben.
 	 * @return Zufallsgraph
 	 */
-	public static Graph zufallsGraph()
+	public static Graph zufallsGraph(int kn, int kt)
 	{
 		Random zufall = new Random();
-		int knotenmax = 20, kantenmax = 15, gewichtmax = 10, namensraum = 100,
-				kn = zufall.nextInt(knotenmax)+1, kt = zufall.nextInt(kantenmax)+1;
+		int knotenmax = 20, kantenmax = 15, gewichtmax = 10, namensraum = 100;
+				//kn = zufall.nextInt(knotenmax)+1, kt = zufall.nextInt(kantenmax)+1;
 		Graph g = new Graph(knotenmax);
 		for (int i = 0 ; i <= kn ; i++)
 			g.knotenneu( zufall.nextInt(namensraum)+1 );
@@ -286,6 +287,8 @@ public class Graph
 	 * @author Philipp Arndt
 	 * @param start Startknoten
 	 * @param end Zielknoten
+	 * @return Den kürzesten Weg vom Typ Path
+	 * @see Path
 	 */
 	public Path shortestPath(int start, int end) {
 		if (start == end)	// nothing to do here
@@ -332,17 +335,20 @@ public class Graph
 				// find the entry with lowest distance in reachable list
 				Integer[] nearestNeighbor = { 0, 0, 0 };
 
-				// hacky workaround
-				int shortestDistance = 10000000;
-
 				// save index to delete entry afterwards
 				int index = -1;
 
-				for(int i = 0; i < reachable.size(); i++) {
-					if(reachable.get(i)[2] < shortestDistance) {
-						shortestDistance = reachable.get(i)[2];
-						nearestNeighbor = reachable.get(i);
-						index = i;
+				if(reachable.size() > 0) {
+					int shortestDistance = reachable.get(0)[2];
+					nearestNeighbor = reachable.get(0);
+					index = 0;
+
+					for (int i = 1; i < reachable.size(); i++) {
+						if (reachable.get(i)[2] < shortestDistance) {
+							shortestDistance = reachable.get(i)[2];
+							nearestNeighbor = reachable.get(i);
+							index = i;
+						}
 					}
 				}
 
@@ -378,10 +384,87 @@ public class Graph
 			sb.insert(0, start + " --> ");
 
 			return new Path(sb.toString(), current[2]);
+		}
+	}
 
-			/*System.out.println(sb.toString());
+	/**
+	 *
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public Path depthFirstSearch(int start, int end) {
+		if (start == end)	// nothing to do here
+			return new Path(start + " --> " + end, 0);
+		else {
+			Stack<Integer[]> reachable = new Stack<>();
+			ArrayList<Integer[]> reached = new ArrayList<>();
 
-			System.out.println("distance: " + current[2]);*/
+			Integer[] current = { start, start };
+
+			while (current[0] != end) {
+				int currentIndex = knotennr(current[0]);
+
+				// find reachable nodes
+				if(currentIndex > -1) {
+					for (int i = 0; i < kante[currentIndex].length; i++) {
+						if (kante[currentIndex][i] > 0 && i != currentIndex) {
+							// connection exists
+							int possibleNeighbor = knoten[i];
+
+							boolean add = true;
+							// check if a path is already available (in reachable list)
+							for (int j = 0; j < reachable.size(); j++) {
+								if (reachable.get(j)[0] == possibleNeighbor)
+									add = false;
+							}
+
+							// check if node was already reached
+							for(int j = 0; j < reached.size(); j++) {
+								if(reached.get(j)[0] == possibleNeighbor)
+									add = false;
+							}
+
+							// only add if no shorter path is available
+							if (add) {
+								Integer[] newReachable = {knoten[i], current[0]};
+								reachable.push(newReachable);
+							}
+						}
+					}
+				}
+
+				if(reachable.size() > 0) {
+					reached.add(current);
+					current = reachable.pop();
+				}
+				else {
+					// kein weg vorhanden
+					return new Path("Kein Weg vorhanden", 0);
+				}
+			}
+
+			int previous = current[1];
+
+			// string builder for creation of shortest path string
+			StringBuilder sb = new StringBuilder();
+			sb.append(end);
+
+			while(previous != start) {
+				for(int i = 0; i < reached.size(); i++) {
+					if(reached.get(i)[0] == previous) {
+						// append at the beginning
+						sb.insert(0, previous + " --> ");
+
+						previous = reached.get(i)[1];
+					}
+				}
+			}
+
+			// append at the beginning
+			sb.insert(0, start + " --> ");
+
+			return new Path(sb.toString(), 0);
 		}
 	}
 }
