@@ -5,6 +5,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Klasse zur Dialogdarstellung des Dijkstra-Algorithmus
+ * Fragt Start- und Zielknoten ab, berechnet den kürzesten Weg und gibt diesen aus
+ * @author Philipp Arndt, 561164
+ */
 class ShortestPath implements ActionListener {
     private Graph graph;
 
@@ -12,8 +17,6 @@ class ShortestPath implements ActionListener {
     private JLabel labelStart, labelEnd;
     private JTextField start, end;
     private JLabel labelPath, labelDistance;
-
-    private JRadioButton shortestPath, depthFirstSearch;
 
     private JPanel panelControls;
     private JButton calculate, cancel;
@@ -27,37 +30,24 @@ class ShortestPath implements ActionListener {
         inputDialog.setLayout(new BoxLayout(inputDialog.getContentPane(), BoxLayout.Y_AXIS));
 
         // start node
-        inputDialog.add(labelStart = new JLabel("Startknoten:"));
-        inputDialog.add(start = new JTextField());
+        JPanel panelStart = new JPanel();
+        panelStart.add(labelStart = new JLabel("Startknoten:"));
+        panelStart.add(start = new JTextField());
         start.setColumns(12);
+        inputDialog.add(panelStart);
 
         // end node
-        inputDialog.add(labelEnd = new JLabel("Endknoten:"));
-        inputDialog.add(end = new JTextField());
+        JPanel panelEnd = new JPanel();
+        panelEnd.add(labelEnd = new JLabel("Endknoten:"));
+        panelEnd.add(end = new JTextField());
         end.setColumns(12);
+        inputDialog.add(panelEnd);
 
         // result
-        inputDialog.add(labelPath = new JLabel("Weg:"));
-        inputDialog.add(labelDistance = new JLabel("Distanz:"));
-
-
-        shortestPath = new JRadioButton("Kürzester Weg");
-        shortestPath.setSelected(true);
-        depthFirstSearch = new JRadioButton("Tiefensuche");
-        //pigButton.setMnemonic(KeyEvent.VK_P);
-        //pigButton.setActionCommand(pigString);
-
-        //Group the radio buttons.
-        ButtonGroup group = new ButtonGroup();
-        group.add(shortestPath);
-        group.add(depthFirstSearch);
-
-        JPanel panelSelect = new JPanel();
-        panelSelect.setLayout(new FlowLayout());
-        panelSelect.add(shortestPath);
-        panelSelect.add(depthFirstSearch);
-
-        inputDialog.add(panelSelect);
+        JPanel panelResult = new JPanel();
+        panelResult.add(labelPath = new JLabel(""));
+        panelResult.add(labelDistance = new JLabel(""));
+        inputDialog.add(panelResult);
 
         panelControls = new JPanel();
         // calculate button
@@ -90,13 +80,10 @@ class ShortestPath implements ActionListener {
         if(startNode > 0 && endNode > 0) {
             // calculate path
             Path path;
-            if(shortestPath.isSelected())
-                path = graph.shortestPath(startNode, endNode);
-            else
-                path = graph.depthFirstSearch(startNode, endNode);
+            path = graph.shortestPath(startNode, endNode);
 
             // set result labels
-            labelPath.setText("Weg: " + path.getPath());
+            labelPath.setText("Weg: " + path.getPath() + ", ");
             labelDistance.setText("Distanz: " + path.getDistance());
         }
     }

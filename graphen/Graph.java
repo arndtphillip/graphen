@@ -284,6 +284,7 @@ public class Graph
 	}
 
 	/**
+	 * Berechnet den kürzesten Weg zwischen 2 Konten mithilfe des Dijkstra-Alogrithmus
 	 * @author Philipp Arndt
 	 * @param start Startknoten
 	 * @param end Zielknoten
@@ -384,87 +385,6 @@ public class Graph
 			sb.insert(0, start + " --> ");
 
 			return new Path(sb.toString(), current[2]);
-		}
-	}
-
-	/**
-	 *
-	 * @param start
-	 * @param end
-	 * @return
-	 */
-	public Path depthFirstSearch(int start, int end) {
-		if (start == end)	// nothing to do here
-			return new Path(start + " --> " + end, 0);
-		else {
-			Stack<Integer[]> reachable = new Stack<>();
-			ArrayList<Integer[]> reached = new ArrayList<>();
-
-			Integer[] current = { start, start };
-
-			while (current[0] != end) {
-				int currentIndex = knotennr(current[0]);
-
-				// find reachable nodes
-				if(currentIndex > -1) {
-					for (int i = 0; i < kante[currentIndex].length; i++) {
-						if (kante[currentIndex][i] > 0 && i != currentIndex) {
-							// connection exists
-							int possibleNeighbor = knoten[i];
-
-							boolean add = true;
-							// check if a path is already available (in reachable list)
-							for (int j = 0; j < reachable.size(); j++) {
-								if (reachable.get(j)[0] == possibleNeighbor)
-									add = false;
-							}
-
-							// check if node was already reached
-							for(int j = 0; j < reached.size(); j++) {
-								if(reached.get(j)[0] == possibleNeighbor)
-									add = false;
-							}
-
-							// only add if no shorter path is available
-							if (add) {
-								Integer[] newReachable = {knoten[i], current[0]};
-								reachable.push(newReachable);
-							}
-						}
-					}
-				}
-
-				if(reachable.size() > 0) {
-					reached.add(current);
-					current = reachable.pop();
-				}
-				else {
-					// kein weg vorhanden
-					return new Path("Kein Weg vorhanden", 0);
-				}
-			}
-
-			int previous = current[1];
-
-			// string builder for creation of shortest path string
-			StringBuilder sb = new StringBuilder();
-			sb.append(end);
-
-			while(previous != start) {
-				for(int i = 0; i < reached.size(); i++) {
-					if(reached.get(i)[0] == previous) {
-						// append at the beginning
-						sb.insert(0, previous + " --> ");
-
-						previous = reached.get(i)[1];
-					}
-				}
-			}
-
-			// append at the beginning
-			sb.insert(0, start + " --> ");
-
-			return new Path(sb.toString(), 0);
 		}
 	}
 }

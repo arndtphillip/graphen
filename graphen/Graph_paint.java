@@ -94,7 +94,7 @@ public class Graph_paint extends JFrame
 		menu.add(zufallsgraph = new JButton("Zufallsgraph!") );
 		zufallsgraph.addActionListener( new GraphZufall() );
 
-		menu.add(shortestPath = new JButton("Wegsuche"));
+		menu.add(shortestPath = new JButton("Dijkstra"));
 		shortestPath.addActionListener(new ShortestPath(graph));
 
 		//Anzeige existente Knoten
@@ -484,7 +484,7 @@ public class Graph_paint extends JFrame
 	}
     /**
      * Subklasse für den Button Zufallsgraph.
-     * Erstellt einen Zufälligen Graphen..
+     * Erstellt einen Zufälligen Graphen nach Abfrage der gewünschten Knoten- und Kantenzahl.
      * @author Leonardo Ruland, 558307 / Philipp Arndt, 561164
      * @see Graph_paint
      * @see Graph
